@@ -26,7 +26,7 @@ use tracing_subscriber::layer::SubscriberExt as _;
 use tracing_subscriber::util::SubscriberInitExt as _;
 
 const NODE_ID: HomieID = HomieID::new_const("gate");
-const STATUS_ID: HomieID = HomieID::new_const("status");
+const STATUS_ID: HomieID = HomieID::new_const("is-closed");
 const CMD_OPEN_ID: HomieID = HomieID::new_const("open");
 const CMD_CLOSE_ID: HomieID = HomieID::new_const("close");
 const CMD_OPEN_HALF_ID: HomieID = HomieID::new_const("open-half");
@@ -56,11 +56,11 @@ struct Args {
     #[clap(long, default_value = "uzparine")]
     device_name: String,
 
-    /// Specify GPIO pin that indicates whether the gate is not closed.
+    /// Specify GPIO pin that indicates whether the gate is closed.
     ///
     /// Value should be the `{name of the pin}={value when gate is not closed}`
     #[clap(long)]
-    status_not_closed_gpio: Option<String>,
+    status_is_closed_gpio: Option<String>,
 
     /// Specify GPIO pin that needs to be toggled in order to send the Open Gate command.
     ///
@@ -270,7 +270,7 @@ impl HomieDevice {
                 };
                 builder.request().map_err(Error::GpioLineRequest)
             };
-            if let Some(_) = check_line(&args.status_not_closed_gpio)? {
+            if let Some(_) = check_line(&args.status_is_closed_gpio)? {
                 let io = gpiocdev::Request::builder()
                     .with_found_line(&line)
                     .with_edge_detection(EdgeDetection::BothEdges)
@@ -278,7 +278,7 @@ impl HomieDevice {
                     .request()
                     .map_err(Error::GpioLineRequest)?;
                 if let Some(_) = status_gpio.replace(io) {
-                    let n = args.status_not_closed_gpio.as_deref().unwrap_or("");
+                    let n = args.status_is_closed_gpio.as_deref().unwrap_or("");
                     return Err(Error::MultipleGpioMatch(n.to_string()));
                 }
             }
@@ -319,8 +319,8 @@ impl HomieDevice {
         };
         verify_found_if_requested(
             status_gpio.is_some(),
-            &args.status_not_closed_gpio,
-            "status-not-closed-gpio",
+            &args.status_is_closed_gpio,
+            "status-is-closed-gpio",
         )?;
         verify_found_if_requested(
             open_gpio.is_some(),
