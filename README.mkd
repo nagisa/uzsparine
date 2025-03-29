@@ -1,0 +1,18 @@
+<div align="center">
+    <h1>uzsparine</h1>
+    <strong>A basic MQTT gateway to control my Roger gate opener</strong>
+</div>
+
+The name comes from the baltic/pagan goddess of land borders. Super-tailored to my specific
+use-case and hardware (although you're welcome to take inspiration.) This runs on a SBC (RockPiE,
+in my case) with an off-shelf optocoupler module board in between the SBC and the control board for
+the opener.
+
+I have it connected to 5 distinct signals: open command, close command, pedestrian (open 50%)
+command, step-by-step command. These when shorted to ground do exactly what it says on the tin. And
+finally I have it connected to a potential free contact that's configured to close when the gate is
+fully closed.
+
+Why an SBC, that's way overkill? Well, the SBC serves as a double-duty for some other tasks that
+are off-topic here. But today I would have picked something different & more compact, for the task.
+Not an ESP32 (my usual go-to) as I needed multiple NICs.

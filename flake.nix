@@ -25,20 +25,20 @@
             packages.default = package pkgs;
         };
     in (flake-utils.lib.eachDefaultSystem (system: flakeForSystem system)) // rec {
-        overlay = final: prev: { uzparine = package final; };
+        overlay = final: prev: { uzsparine = package final; };
         nixosModules.default = { config, lib, pkgs, utils, ... }:
         let
-            cfg = config.services.uzparine;
+            cfg = config.services.uzsparine;
         in with lib; {
-            options.services.uzparine = {
-                enable = mkEnableOption "Enable the uzparine service for gate2mqtt proxy.";
+            options.services.uzsparine = {
+                enable = mkEnableOption "Enable the uzsparine service for gate2mqtt proxy.";
                 package = mkOption {
-                    description = "The uzparine package to use";
+                    description = "The uzsparine package to use";
                     type = types.package;
-                    default = pkgs.uzparine;
+                    default = pkgs.uzsparine;
                 };
                 flags = mkOption {
-                    description = ''uzparine CLI flags to pass into the service.'';
+                    description = ''uzsparine CLI flags to pass into the service.'';
                     default = { };
                     type = types.listOf types.str;
                 };
@@ -46,14 +46,14 @@
 
             config = mkIf cfg.enable {
                 nixpkgs.overlays = [ overlay ];
-                systemd.services.uzparine = {
-                    description = "uzparine gate2mqtt gate control proxy";
+                systemd.services.uzsparine = {
+                    description = "uzsparine gate2mqtt gate control proxy";
                     wants = [ "network.target" ];
                     wantedBy = [ "multi-user.target" ];
                     serviceConfig = {
                         Restart = "on-failure";
                         ExecStart = utils.escapeSystemdExecArgs ([
-                            "${cfg.package}/bin/uzparine"
+                            "${cfg.package}/bin/uzsparine"
                         ] ++ cfg.flags);
                     };
                 };

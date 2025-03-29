@@ -53,7 +53,7 @@ struct Args {
     #[clap(short = 'p', long, requires = "mqtt_user")]
     mqtt_password: Option<String>,
 
-    #[clap(long, default_value = "uzparine")]
+    #[clap(long, default_value = "uzsparine")]
     device_name: String,
 
     /// Specify GPIO pin that indicates whether the gate is closed.
@@ -369,7 +369,7 @@ impl HomieDevice {
             node = node.add_property(CMD_OPEN_HALF_ID, cmd_prop.clone());
         }
         let description = homie5::device_description::DeviceDescriptionBuilder::new()
-            .name("uzparine")
+            .name(args.device_name.clone())
             .add_node(NODE_ID, node.build())
             .build();
         Ok(Self {
