@@ -50,8 +50,10 @@
                     description = "uzsparine gate2mqtt gate control proxy";
                     wants = [ "network.target" ];
                     wantedBy = [ "multi-user.target" ];
+                    unitConfig.StartLimitIntervalSec = "0s";
                     serviceConfig = {
-                        Restart = "on-failure";
+                        Restart = "always";
+                        RestartSec = 5;
                         ExecStart = utils.escapeSystemdExecArgs ([
                             "${cfg.package}/bin/uzsparine"
                         ] ++ cfg.flags);
